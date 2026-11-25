@@ -12,8 +12,16 @@ addresses. If one is sent anyway, the capability returns `invalid_ip`.
 
 ## Request settings (fixed)
 
+Every call must use these settings. Never rely on a provider's defaults.
+
 - Lookback window: 90 days.
 - Report comments: not requested.
+
+An implementation that applies these itself (for example, a script
+that hardcodes them) meets this by construction. An implementation
+that cannot (for example, a tool that exposes them as parameters
+with different defaults) must document in its integration README
+how the caller supplies them.
 
 ## Output
 
