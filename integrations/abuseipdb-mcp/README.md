@@ -89,3 +89,44 @@ and reports AbuseIPDB's score and facts only.
 | `rate_limited`  | Structured `RATE_LIMITED` error from the server |
 | `invalid_ip`    | Server rejects private/reserved or malformed IP |
 | `unavailable`   | Timeout or provider error                       |
+
+## API key
+
+The server reads `ABUSEIPDB_API_KEY` from its environment. The key lives
+in a gitignored `.env` file at the repo root, loaded by mise (see
+`mise.toml`). Never put the key in `opencode.json`, this README, or any
+tracked file.
+
+First-time setup, from the repo root:
+
+    read -rs KEY_IN && printf 'ABUSEIPDB_API_KEY=%s\n' "$KEY_IN" > .env && unset KEY_IN
+    chmod 600 .env
+    mise trust
+
+`.env.example` shows the variable name. mise refuses to load `.env`
+until you run `mise trust`, and again after any edit to the file
+(including rotating the key).
+
+Check it loaded, without printing the key:
+
+    [ -n "$ABUSEIPDB_API_KEY" ] && echo "set" || echo "NOT set"
+
+Run this inside the repo. Outside it, the variable is correctly unset.
+
+Gotcha: a process only receives the environment it was started with.
+If the harness was already running when the key was set or changed,
+it will not see it. Quit it fully and relaunch from the repo root.
+The symptom is "MCP server failed: ABUSEIPDB_API_KEY is not set."
+
+## Rebuilding the environment
+
+The `.venv/` points at the Python that created it. If that Python is
+later removed or upgraded, the server may fail to start. Fix:
+
+    cd integrations/abuseipdb-mcp
+    rm -rf .venv
+    export UV_CACHE_DIR="$PWD/.uv-cache"
+    uv venv
+    uv pip install -r requirements.txt
+
+`requirements.txt` pins the versions, so the rebuild is identical.
