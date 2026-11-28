@@ -26,31 +26,17 @@ re-test before committing.
 `.venv/` and `.uv-cache/` are gitignored. Delete this folder's
 `.venv/` and `.uv-cache/` to remove the install completely.
 
-## API key
-
-The server reads `ABUSEIPDB_API_KEY` from its environment. Never put
-the key in `opencode.json`, in this README, or anywhere in the repo.
-
-Set it for the current terminal session without echoing it or saving
-it to shell history:
-
-    read -rs ABUSEIPDB_API_KEY && export ABUSEIPDB_API_KEY
-
-Then start your harness **from that same terminal**.
-
-Gotcha: a process only receives the environment it was started with.
-If the harness was already running when you set the key, it will not
-see it. Quit it fully and relaunch. The symptom is "MCP server failed:
-ABUSEIPDB_API_KEY is not set."
-
 ## Wiring (OpenCode)
 
-`opencode.json` in the repo root starts the server from this folder's
-virtual environment:
+`opencode.json` in the repo root starts the server through mise, so the
+server inherits the key from `.env` no matter how OpenCode itself was
+launched:
 
-    "command": ["integrations/abuseipdb-mcp/.venv/bin/mcp-server-abuseipdb"]
+    "command": ["mise", "exec", "--", "integrations/abuseipdb-mcp/.venv/bin/mcp-server-abuseipdb"]
 
-The path is relative, so start OpenCode from the repo root.
+The path is relative, so start OpenCode from the repo root. `codemode`
+is off, which exposes the tool as `abuseipdb_check_ip` instead of
+nesting it behind `execute`.
 
 ## Required parameters
 
@@ -113,10 +99,10 @@ Check it loaded, without printing the key:
 
 Run this inside the repo. Outside it, the variable is correctly unset.
 
-Gotcha: a process only receives the environment it was started with.
-If the harness was already running when the key was set or changed,
-it will not see it. Quit it fully and relaunch from the repo root.
-The symptom is "MCP server failed: ABUSEIPDB_API_KEY is not set."
+Because the command runs through `mise exec`, the key is read from `.env`
+each time the server starts. After rotating it, reconnect the server
+(`/mcps`, or `/reload`) rather than relaunching OpenCode. The symptom of
+a missing key is "MCP server failed: ABUSEIPDB_API_KEY is not set."
 
 ## Rebuilding the environment
 

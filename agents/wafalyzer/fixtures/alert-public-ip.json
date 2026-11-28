@@ -1,0 +1,17 @@
+{
+  "schema": "wafalyzer.alert.v1",
+  "time": "2026-11-28T09:12:04Z",
+  "action": "blocked",
+  "rule": "XSS-941100",
+  "rule_detail": null,
+  "method": "POST",
+  "host": "shop.example",
+  "path": "/checkout",
+  "status": 403,
+  "client_ip": "8.8.8.8",
+  "client_ip_source": "clientIp",
+  "forwarded_for": [],
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+  "injection_flags": [],
+  "raw": null
+}

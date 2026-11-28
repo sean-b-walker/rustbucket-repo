@@ -1,10 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "abuseipdb": {
-      "type": "local",
-      "command": ["integrations/abuseipdb-mcp/.venv/bin/mcp-server-abuseipdb"],
-      "enabled": true
+    "servers": {
+      "abuseipdb": {
+        "type": "local",
+        "command": ["mise", "exec", "--", "integrations/abuseipdb-mcp/.venv/bin/mcp-server-abuseipdb"],
+        "codemode": false
+      }
     }
   }
 }
